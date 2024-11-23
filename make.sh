@@ -16,8 +16,16 @@ esac
 echo -e "\033[92mInfo\033[0m: Detected Operating System: "${target}
 echo_and_execute() { echo "$@"; "$@"; }
 if command -v make &>/dev/null; then # if make is available, compile FluidX3D with multiple CPU cores
-	echo -e "\033[92mInfo\033[0m: Compiling with "$(nproc)" CPU cores."
-	make ${target} -j$(nproc) # compile FluidX3D with makefile
+  case "${target}" in
+    Linux-X11|Linux)
+      echo -e "\033[92mInfo\033[0m: Compiling with "$(nproc)" CPU cores."
+      make ${target} -j$(nproc) # compile FluidX3D with makefile
+      ;;
+    macOS)
+      echo -e "\033[92mInfo\033[0m: Compiling with "$(sysctl -n hw.physicalcpu)" CPU cores."
+      make ${target} -j$(sysctl -n hw.physicalcpu) # compile FluidX3D with makefile
+      ;;
+  esac
 else # else (make is not installed), compile FluidX3D with a single CPU core
 	echo -e "\033[92mInfo\033[0m: Compiling with 1 CPU core. For faster multi-core compiling, install make with \"sudo apt install make\"."
 	mkdir -p bin # create directory for executable
@@ -25,7 +33,7 @@ else # else (make is not installed), compile FluidX3D with a single CPU core
 	case "${target}" in
 		Linux-X11) echo_and_execute g++ src/*.cpp -o bin/FluidX3D -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L./src/OpenCL/lib -lOpenCL -I./src/X11/include -L./src/X11/lib -lX11 -lXrandr ;;
 		Linux    ) echo_and_execute g++ src/*.cpp -o bin/FluidX3D -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L./src/OpenCL/lib -lOpenCL                                                    ;;
-		macOS    ) echo_and_execute g++ src/*.cpp -o bin/FluidX3D -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -framework OpenCL                                                              ;;
+		macOS    ) echo_and_execute g++ src/*.cpp -o bin/FluidX3D -std=c++17 -pthread -O -Wno-comment -DCL_SILENCE_DEPRECATION -I./src/OpenCL/include -framework OpenCL                                                              ;;
 		Android  ) echo_and_execute g++ src/*.cpp -o bin/FluidX3D -std=c++17 -pthread -O -Wno-comment -I./src/OpenCL/include -L/system/vendor/lib64 -lOpenCL                                                ;;
 	esac
 fi

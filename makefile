@@ -9,8 +9,11 @@ no-target:
 Linux-X11 Linux macOS Android: LDFLAGS_OPENCL = -I./src/OpenCL/include
 
 Linux-X11 Linux: LDLIBS_OPENCL = -L./src/OpenCL/lib -lOpenCL
-macOS: LDLIBS_OPENCL = -framework OpenCL
+macOS: LDLIBS_OPENCL =  -framework OpenCL
 Android: LDLIBS_OPENCL = -L/system/vendor/lib64 -lOpenCL
+
+Linux-X11 Linux Android: CL_SILENCE_FLAG =
+macOS: CL_SILENCE_FLAG = -DCL_SILENCE_DEPRECATION
 
 Linux-X11: LDFLAGS_X11 = -I./src/X11/include
 Linux macOS Android: LDFLAGS_X11 =
@@ -30,7 +33,7 @@ temp/graphics.o: src/graphics.cpp src/defines.hpp src/graphics.hpp src/lodepng.h
 
 temp/info.o: src/info.cpp src/defines.hpp src/graphics.hpp src/info.hpp src/lbm.hpp src/lodepng.hpp src/opencl.hpp src/units.hpp src/utilities.hpp make.sh
 	@mkdir -p temp
-	$(CC) -c src/info.cpp -o temp/info.o $(CFLAGS) $(LDFLAGS_OPENCL)
+	$(CC) -c src/info.cpp -o temp/info.o $(CFLAGS) $(LDFLAGS_OPENCL) $(CL_SILENCE_FLAG)
 
 temp/kernel.o: src/kernel.cpp src/kernel.hpp src/lodepng.hpp src/utilities.hpp
 	@mkdir -p temp
@@ -38,7 +41,7 @@ temp/kernel.o: src/kernel.cpp src/kernel.hpp src/lodepng.hpp src/utilities.hpp
 
 temp/lbm.o: src/lbm.cpp src/defines.hpp src/graphics.hpp src/info.hpp src/lbm.hpp src/lodepng.hpp src/opencl.hpp src/units.hpp src/utilities.hpp make.sh
 	@mkdir -p temp
-	$(CC) -c src/lbm.cpp -o temp/lbm.o $(CFLAGS) $(LDFLAGS_OPENCL)
+	$(CC) -c src/lbm.cpp -o temp/lbm.o $(CFLAGS) $(LDFLAGS_OPENCL) $(CL_SILENCE_FLAG)
 
 temp/lodepng.o: src/lodepng.cpp src/lodepng.hpp
 	@mkdir -p temp
@@ -46,11 +49,11 @@ temp/lodepng.o: src/lodepng.cpp src/lodepng.hpp
 
 temp/main.o: src/main.cpp src/defines.hpp src/graphics.hpp src/info.hpp src/lbm.hpp src/lodepng.hpp src/opencl.hpp src/setup.hpp src/shapes.hpp src/units.hpp src/utilities.hpp make.sh
 	@mkdir -p temp
-	$(CC) -c src/main.cpp -o temp/main.o $(CFLAGS) $(LDFLAGS_OPENCL)
+	$(CC) -c src/main.cpp -o temp/main.o $(CFLAGS) $(LDFLAGS_OPENCL) $(CL_SILENCE_FLAG)
 
 temp/setup.o: src/setup.cpp src/defines.hpp src/graphics.hpp src/info.hpp src/lbm.hpp src/lodepng.hpp src/opencl.hpp src/setup.hpp src/shapes.hpp src/units.hpp src/utilities.hpp make.sh
 	@mkdir -p temp
-	$(CC) -c src/setup.cpp -o temp/setup.o $(CFLAGS) $(LDFLAGS_OPENCL)
+	$(CC) -c src/setup.cpp -o temp/setup.o $(CFLAGS) $(LDFLAGS_OPENCL) $(CL_SILENCE_FLAG)
 
 temp/shapes.o: src/shapes.cpp src/shapes.hpp src/utilities.hpp make.sh
 	@mkdir -p temp
